@@ -6,8 +6,11 @@
 <body>
     <h1>Calculadora</h1>
     <form method="post">
-        <input type="text" name="num1" placeholder="Número 1" required>
-        <input type="text" name="num2" placeholder="Número 2" required>
+         {% if config.WTF_CSRF_ENABLED %}
+            {{ form.hidden_tag() }}
+         {% endif %}
+         {{ form.num1(id="num1") }}
+         {{ form.num2(id="num2") }}
         <select name="operacion">
             <option value="sumar">Sumar</option>
             <option value="restar">Restar</option>

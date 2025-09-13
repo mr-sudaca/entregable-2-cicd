@@ -1,21 +1,37 @@
 # app/app.py
 """Aplicación web de calculadora usando Flask."""
 
+import os
 from flask import Flask, render_template, request
+from flask_wtf import CSRFProtect, FlaskForm
+from wtforms import StringField
+
+
 from .calculadora import sumar, restar, multiplicar, dividir
 
 app = Flask(__name__)
+app.secret_key = os.getenv("CSRF_KEY", "")
+csrf = CSRFProtect(app)
+
+
+class FormCalculadora(FlaskForm):
+    """form simple con CSRF."""
+
+    num1 = StringField("num1")
+    num2 = StringField("num2")
+    operacion = StringField("operacion")
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     """Página principal de la calculadora."""
     resultado = None
+    form = FormCalculadora()
     if request.method == "POST":
         try:
-            num1 = float(request.form["num1"])
-            num2 = float(request.form["num2"])
-            operacion = request.form["operacion"]
+            num1 = float(form.num1.data or "")
+            num2 = float(form.num2.data or "")
+            operacion = form.operacion.data
 
             if operacion == "sumar":
                 resultado = sumar(num1, num2)
@@ -32,7 +48,7 @@ def index():
         except ZeroDivisionError:
             resultado = "Error: No se puede dividir por cero"
 
-    return render_template("index.html", resultado=resultado)
+    return render_template("index.html", resultado=resultado, form=form)
 
 
 if __name__ == "__main__":  # pragma: no cover

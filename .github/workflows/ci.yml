@@ -38,12 +38,15 @@ jobs:
         run: flake8 app --output-file=flake8-report.txt || true
 
       - name: Run Unit Tests with pytest and Coverage
+        env:
+          CSRF_KEY: ${{ secrets.CSRF_KEY }}
         run: |
           pytest --ignore=tests/test_acceptance_app.py  # Genera un informe XML para SonarCloud
 
       - name: Run Acceptance Tests
         env:
            APP_BASE_URL: http://localhost:8000
+           CSRF_KEY: ${{ secrets.CSRF_KEY }}
         run: |
           gunicorn --workers=2 --bind=0.0.0.0:8000 app.app:app &
           sleep 10

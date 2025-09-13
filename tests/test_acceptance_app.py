@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:5000")
+BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:15000")
 
 # Configuración del driver (elige uno: Chrome o Firefox)
 @pytest.fixture
@@ -45,6 +45,7 @@ def get_resultado(browser):
 
 #Funcion auxiliar para encontrar elementos:
 def find_elements(browser):
+    print(browser.page_source[:500])
     num1_input = browser.find_element(By.NAME, "num1")
     num2_input = browser.find_element(By.NAME, "num2")
     operacion_select = Select(browser.find_element(By.NAME, "operacion"))
