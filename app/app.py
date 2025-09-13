@@ -22,7 +22,8 @@ class FormCalculadora(FlaskForm):
     operacion = StringField("operacion")
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/calcular", methods=["POST"])
+@app.route("/", methods=["GET"])
 def index():
     """Página principal de la calculadora."""
     resultado = None

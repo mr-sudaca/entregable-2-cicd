@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Calculadora</h1>
-    <form method="post">
+    <form method="post" action="/calcular">
          {% if config.WTF_CSRF_ENABLED %}
             {{ form.hidden_tag() }}
          {% endif %}
