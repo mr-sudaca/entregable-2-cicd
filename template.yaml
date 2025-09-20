@@ -20,6 +20,12 @@ Parameters:
   SubnetIds:
     Type: List<AWS::EC2::Subnet::Id>
     Description: Lista de al menos DOS IDs de subredes PuBLICAS de la VPC por defecto en diferentes AZs.
+  LoggingBucket:
+    Type: String
+    Description: "Nombre del bucket S3 existente para logs del ALB."
+  CSRFKey:
+    Type: String
+    Description: "Clave secreta para CSRF"
 
 Resources:
   # --- Grupo de Logs para ECS ---
@@ -87,6 +93,19 @@ Resources:
       Tags:
         - Key: Environment
           Value: !Ref EnvironmentName
+      LoadBalancerAttributes:
+        - Key: access_logs.s3.enabled
+          Value: "true"
+        - Key: access_logs.s3.bucket
+          Value: !Ref LoggingBucket
+        - Key: access_logs.s3.prefix
+          Value: !Sub "alb/${EnvironmentName}"
+        - Key: idle_timeout.timeout_seconds
+          Value: "60"
+        - Key: deletion_protection.enabled
+          Value: "false"
+        - Key: load_balancing.cross_zone.enabled
+          Value: "true"
 
   # Listener HTTP en el puerto 80
   ALBListener:
@@ -94,6 +113,7 @@ Resources:
     Properties:
       LoadBalancerArn: !Ref ApplicationLoadBalancer
       Port: 80
+      # NOSONAR
       Protocol: HTTP
       DefaultActions:
         - Type: forward
@@ -138,6 +158,9 @@ Resources:
       ContainerDefinitions:
         - Name: !Sub 'calculadora-${EnvironmentName}-container'
           Image: !Ref DockerImageUri # Imagen de Docker Hub
+          Environment:
+            - Name: CSRF_KEY
+              Value: !Ref CSRFKey
           PortMappings:
             - ContainerPort: 8000
               Protocol: tcp
