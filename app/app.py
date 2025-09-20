@@ -10,6 +10,7 @@ from wtforms import StringField
 from .calculadora import sumar, restar, multiplicar, dividir
 
 app = Flask(__name__)
+app_port = int(os.environ.get("PORT", 5000))
 app.secret_key = os.getenv("CSRF_KEY", "")
 csrf = CSRFProtect(app)
 
@@ -20,6 +21,12 @@ class FormCalculadora(FlaskForm):
     num1 = StringField("num1")
     num2 = StringField("num2")
     operacion = StringField("operacion")
+
+
+@app.route("/health")
+def health():
+    """Endpoint de salud"""
+    return "OK", 200
 
 
 @app.route("/calcular", methods=["POST"])
@@ -53,4 +60,4 @@ def index():
 
 
 if __name__ == "__main__":  # pragma: no cover
-    app.run(port=8000, host="0.0.0.0")
+    app.run(port=app_port, host="0.0.0.0")
