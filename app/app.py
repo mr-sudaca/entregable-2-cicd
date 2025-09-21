@@ -7,7 +7,7 @@ from flask_wtf import CSRFProtect, FlaskForm
 from wtforms import StringField
 
 
-from .calculadora import sumar, restar, multiplicar, dividir
+from .calculadora import sumar, restar, multiplicar, dividir, modulo, potencia
 
 app = Flask(__name__)
 app_port = int(os.environ.get("PORT", 5000))
@@ -49,6 +49,10 @@ def index():
                 resultado = multiplicar(num1, num2)
             elif operacion == "dividir":
                 resultado = dividir(num1, num2)
+            elif operacion == "modulo":
+                resultado = modulo(num1, num2)
+            elif operacion == "potencia":
+                resultado = potencia(num1, num2)
             else:
                 resultado = "Operación no válida"
         except ValueError:
